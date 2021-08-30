@@ -2,6 +2,8 @@
 
 An interactive fuzzy interface for runz, using [sk](https://github.com/lotabout/skim) or [fzf](https://github.com/junegunn/fzf)
 
+[![asciicast](https://asciinema.org/a/yaL10pcjxU8aVVjO5lrs02t0b.svg)](https://asciinema.org/a/yaL10pcjxU8aVVjO5lrs02t0b)
+
 ## Usage
 
 - just run script, select service, then select action
