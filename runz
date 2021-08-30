@@ -1,0 +1,76 @@
+#!/bin/dash
+# vim: filetype=bash
+
+set -eu pipefail
+
+#
+# runz: fuzzy interface for runit, inspired by https://github.com/joehillen/sysz
+#
+
+HOME="/home/dhruv"
+USERSVDIR="$HOME/.local/service"
+ROOTSVDIR="/run/runit/service"
+SUDOCMD=doas
+FUZZYHANDLER=sk
+
+services="$(echo $USERSVDIR $ROOTSVDIR | xargs --max-args=1 ls | $FUZZYHANDLER --ansi -m)"
+
+if [ -z "$services" ] ; then
+     echo "return 1"
+     return 1
+fi
+
+action="$(echo "status
+up
+down
+once
+pause
+cont
+hup
+alarm
+interrupt
+quit
+term
+kill
+exit
+start
+stop
+reload
+restart
+shutdown
+force-stop
+force-reload
+force-restart
+force-shutdown
+try-restart
+check" | $FUZZYHANDLER )"
+
+# echo $action
+# echo $services
+
+if [ -z "$action" ] ; then
+     echo "return 1"
+     return 1
+fi
+
+user_services=""
+root_services=""
+
+for service in $services ; do
+    if [ -L "$USERSVDIR/$service" ] ; then
+        user_services="$user_services $service"
+    elif [ -L "$ROOTSVDIR/$service" ] ; then
+        root_services="$root_services $service"
+    fi
+done
+
+# echo $user_services
+# echo $root_services
+
+if [ ! -z "$user_services" ] ; then
+    SVDIR="$USERSVDIR" sv "$action" $user_services
+fi
+
+if [ ! -z "$root_services" ] ; then
+    $SUDOCMD sv "$action" $root_services
+fi
