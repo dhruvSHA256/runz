@@ -11,9 +11,9 @@ HOME="/home/dhruv"
 USERSVDIR="$HOME/.local/service"
 ROOTSVDIR="/run/runit/service"
 SUDOCMD=doas
-FUZZYHANDLER=sk
+FUZZYHANDLER="fzf --ansi --reverse --height=40% --color=bg+:-1"
 
-services="$(echo $USERSVDIR $ROOTSVDIR | xargs --max-args=1 ls | $FUZZYHANDLER --ansi -m)"
+services="$(echo $USERSVDIR $ROOTSVDIR | xargs --max-args=1 ls | $FUZZYHANDLER -m)"
 
 if [ -z "$services" ] ; then
      echo "return 1"
